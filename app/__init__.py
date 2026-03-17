@@ -14,10 +14,16 @@ login_manager.login_view = 'login'
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-change-this')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+
+    database_url = os.getenv(
         'DATABASE_URL',
         'postgresql://postgres:postgres@localhost:5432/wims_db'
     )
+
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
@@ -26,5 +32,8 @@ def create_app():
     from . import models
     from .routes import register_routes
     register_routes(app)
+
+    with app.app_context():
+        db.create_all()
 
     return app
