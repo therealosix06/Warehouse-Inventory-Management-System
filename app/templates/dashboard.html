@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="hero dashboard-hero">
+    <div class="hero-copy">
+        <p class="muted">Overview</p>
+        <h1>Warehouse Dashboard</h1>
+        <p class="muted">
+            Welcome back, {{ current_user.full_name }}.
+            You are signed in as <strong>{{ current_user.role }}</strong>.
+            This dashboard gives a live summary of inventory activity, procurement activity,
+            and stock health across the system.
+        </p>
+
+        <div class="button-row">
+            <a href="{{ url_for('items') }}" class="btn">Manage Items</a>
+            <a href="{{ url_for('transactions') }}" class="btn btn-secondary">Record Transaction</a>
+            <a href="{{ url_for('reports') }}" class="btn btn-secondary">Open Reports</a>
+        </div>
+    </div>
+
+    <div class="hero-orb-wrap">
+        <div class="hero-orb"></div>
+    </div>
+</section>
+
+<section class="grid cards-4 dashboard-stats" style="margin-top: 1rem;">
+    <div class="card stat-card float-card">
+        <p class="muted">Total Items</p>
+        <p class="big">{{ total_items }}</p>
+    </div>
+
+    <div class="card stat-card float-card">
+        <p class="muted">Suppliers</p>
+        <p class="big">{{ total_suppliers }}</p>
+    </div>
+
+    <div class="card stat-card float-card">
+        <p class="muted">Purchase Orders</p>
+        <p class="big">{{ total_purchase_orders }}</p>
+    </div>
+
+    <div class="card stat-card float-card">
+        <p class="muted">Transactions</p>
+        <p class="big">{{ total_transactions }}</p>
+    </div>
+</section>
+
+<section class="grid cards-4 quick-links" style="margin-top: 1rem;">
+    <a href="{{ url_for('items') }}" class="card quick-card">
+        <h3>Items</h3>
+        <p class="muted">Create, review, and update inventory records.</p>
+    </a>
+
+    <a href="{{ url_for('suppliers') }}" class="card quick-card">
+        <h3>Suppliers</h3>
+        <p class="muted">Manage suppliers and item-supplier relationships.</p>
+    </a>
+
+    <a href="{{ url_for('purchase_orders') }}" class="card quick-card">
+        <h3>Purchase Orders</h3>
+        <p class="muted">Track procurement activity and delivery progress.</p>
+    </a>
+
+    <a href="{{ url_for('audit_logs') }}" class="card quick-card">
+        <h3>Audit Logs</h3>
+        <p class="muted">Review tracked database changes and accountability records.</p>
+    </a>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <div class="card dashboard-highlight">
+        <h2>Total Stock Value</h2>
+        <p class="big">GHS {{ '%.2f'|format(stock_value or 0) }}</p>
+        <p class="muted">
+            Estimated current stock value based on quantity in stock multiplied by unit price.
+        </p>
+    </div>
+
+    <div class="card dashboard-highlight">
+        <h2>Stock Health</h2>
+        {% if low_stock_items %}
+            <p class="muted">
+                {{ low_stock_items|length }} item(s) currently require attention because they are at or below reorder level.
+            </p>
+            <span class="badge badge-warning">Reorder Attention Needed</span>
+        {% else %}
+            <p class="muted">
+                All monitored items are currently above reorder level.
+            </p>
+            <span class="badge badge-success">Stock Levels Stable</span>
+        {% endif %}
+    </div>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <section class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Low Stock Alerts</h2>
+                <p class="muted">Items that may require replenishment soon.</p>
+            </div>
+        </div>
+
+        {% if low_stock_items %}
+            <div class="grid">
+                {% for item in low_stock_items %}
+                    <div class="po-card low-stock-row">
+                        <div class="button-row" style="justify-content: space-between; align-items: center;">
+                            <strong>{{ item.item_name }}</strong>
+                            <span class="badge badge-warning">Low Stock</span>
+                        </div>
+                        <p class="muted" style="margin-bottom: 0;">
+                            Current stock: <strong>{{ item.quantity_in_stock }}</strong><br>
+                            Reorder level: <strong>{{ item.reorder_level }}</strong>
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">No low stock items at the moment.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Recent Transactions</h2>
+                <p class="muted">Latest stock movements across the warehouse.</p>
+            </div>
+        </div>
+
+        {% if recent_transactions %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for txn in recent_transactions %}
+                        <tr>
+                            <td>{{ txn.transaction_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if txn.transaction_type == 'IN' %}
+                                    <span class="badge badge-success">IN</span>
+                                {% else %}
+                                    <span class="badge badge-danger">OUT</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ txn.item.item_name }}</td>
+                            <td>{{ txn.quantity }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="muted">No transactions recorded yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

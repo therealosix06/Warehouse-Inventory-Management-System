@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WIMS{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="topbar-left">
+                <a class="brand" href="{{ url_for('dashboard') if current_user.is_authenticated else url_for('home') }}">
+                    <span class="brand-mark">W</span>
+                    <div class="brand-text">
+                        <span class="brand-title">WIMS</span>
+                        <span class="brand-subtitle">Warehouse Inventory Management System</span>
+                    </div>
+                </a>
+            </div>
+
+            {% if current_user.is_authenticated %}
+            <div class="topbar-right">
+                <div class="user-chip">
+                    <span class="user-chip-label">Signed in as</span>
+                    <span class="user-chip-name">{{ current_user.full_name }}</span>
+                    <span class="user-chip-role">{{ current_user.role }}</span>
+                </div>
+                <a class="logout-btn" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            {% endif %}
+        </header>
+
+        {% if current_user.is_authenticated %}
+        <nav class="navbar">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('items') }}" class="nav-link">Items</a>
+            <a href="{{ url_for('suppliers') }}" class="nav-link">Suppliers</a>
+            <a href="{{ url_for('transactions') }}" class="nav-link">Transactions</a>
+            <a href="{{ url_for('purchase_orders') }}" class="nav-link">Purchase Orders</a>
+            <a href="{{ url_for('reports') }}" class="nav-link">Reports</a>
+            {% if current_user.role == 'Manager' %}
+            <a href="{{ url_for('users') }}" class="nav-link">Users</a>
+            {% endif %}
+            {% if current_user.role in ['Manager', 'Auditor'] %}
+                <a href="{{ url_for('audit_logs') }}" class="nav-link">Audit Logs</a>
+            {% endif %}
+            <a href="{{ url_for('reference') }}" class="nav-link">DB Notes</a>
+        </nav>
+        {% endif %}
+
+        <main class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <section class="flash-stack">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                <span class="alert-text">{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            {% endwith %}
+
+            <section class="content-card">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+</body>
+</html>

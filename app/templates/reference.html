@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Database Reference{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Project Notes</p>
+    <h1>Database Reference Notes</h1>
+    <p class="muted">
+        This page summarizes the key database design ideas behind the Warehouse Inventory Management System
+        and highlights the main points that should be explained during presentation.
+    </p>
+</section>
+
+<section class="card prose" style="margin-top: 1rem;">
+    <h2>Core Entities and Relationships</h2>
+    <p>
+        This application mirrors the warehouse model using the following core entities:
+        <strong>Item, Category, Supplier, Warehouse, Location, StockTransaction, PurchaseOrder, PurchaseOrderItem, User,</strong>
+        and <strong>ItemSupplier</strong>.
+    </p>
+
+    <ul>
+        <li><strong>Item → Category</strong> is many-to-one.</li>
+        <li><strong>Item ↔ Supplier</strong> is many-to-many through <strong>ItemSupplier</strong>.</li>
+        <li><strong>Location → Warehouse</strong> is many-to-one.</li>
+        <li><strong>StockTransaction → Item</strong> and <strong>StockTransaction → User</strong> are many-to-one.</li>
+        <li><strong>PurchaseOrder → Supplier</strong> and <strong>PurchaseOrder → User</strong> are many-to-one.</li>
+        <li><strong>PurchaseOrderItem → PurchaseOrder</strong> and <strong>PurchaseOrderItem → Item</strong> are many-to-one.</li>
+    </ul>
+
+    <h2>Why PostgreSQL Matters Here</h2>
+    <p>
+        PostgreSQL provides the relational foundation that makes the system reliable and defensible.
+        Primary keys uniquely identify records, foreign keys enforce relationships, numeric fields support price values,
+        and timestamps preserve transaction history. These are the parts that keep the application consistent instead of
+        turning it into guesswork with buttons.
+    </p>
+
+    <h2>Why the Design is Normalized</h2>
+    <p>
+        The schema is structured to reduce redundancy and improve consistency.
+        Categories, suppliers, warehouses, and locations are stored separately instead of being repeated in the item table.
+        The many-to-many relationship between items and suppliers is resolved using the <strong>ItemSupplier</strong> table,
+        and purchase order lines are separated into <strong>PurchaseOrderItem</strong> so that each order can contain multiple items
+        without repeating columns.
+    </p>
+
+    <h2>What to Explain During Presentation</h2>
+    <ol>
+        <li>Show the ERD and map each relationship to an actual table and foreign key.</li>
+        <li>Explain why <strong>ItemSupplier</strong> exists instead of storing supplier data directly inside <strong>Item</strong>.</li>
+        <li>Show how <strong>StockTransaction</strong> preserves history instead of overwriting stock movement.</li>
+        <li>Explain one report and describe the joins used to produce it.</li>
+        <li>Discuss how the schema supports 1NF, 2NF, and 3NF.</li>
+        <li>Explain how role-based access control supports operational discipline and data integrity.</li>
+    </ol>
+</section>
+{% endblock %}

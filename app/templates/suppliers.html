@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Suppliers{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Procurement Module</p>
+    <h1>Suppliers</h1>
+    <p class="muted">
+        Manage supplier records and connect suppliers to inventory items with supply prices
+        for procurement tracking and many-to-many relationship management.
+    </p>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <section class="form-card">
+        <h2>Add Supplier</h2>
+        <p class="muted">
+            Register a supplier with the relevant business and contact details.
+        </p>
+
+        <form method="post">
+            <label for="supplier_name">Supplier Name</label>
+            <input id="supplier_name" name="supplier_name" required>
+
+            <label for="contact_person">Contact Person</label>
+            <input id="contact_person" name="contact_person">
+
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone">
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email">
+
+            <label for="address">Address</label>
+            <textarea id="address" name="address"></textarea>
+
+            <button class="btn" type="submit">Save Supplier</button>
+        </form>
+
+        <div style="height: 1rem;"></div>
+
+        <h2>Link Item to Supplier</h2>
+        <p class="muted">
+            Create or update the relationship between an item and a supplier, including the agreed supply price.
+        </p>
+
+        <form method="post" action="{{ url_for('add_item_supplier') }}">
+            <label for="item_id">Item</label>
+            <select id="item_id" name="item_id" required>
+                {% for item in items %}
+                    <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="supplier_id">Supplier</label>
+            <select id="supplier_id" name="supplier_id" required>
+                {% for supplier in suppliers %}
+                    <option value="{{ supplier.supplier_id }}">{{ supplier.supplier_name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="supply_price">Supply Price</label>
+            <input id="supply_price" type="number" step="0.01" min="0" name="supply_price" required>
+
+            <button class="btn btn-secondary" type="submit">Save Link</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Supplier Directory</h2>
+        <p class="muted">
+            View the active supplier list and their primary contact information.
+        </p>
+
+        {% if suppliers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact Person</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td><strong>{{ supplier.supplier_name }}</strong></td>
+                        <td>{{ supplier.contact_person or '—' }}</td>
+                        <td>{{ supplier.phone or '—' }}</td>
+                        <td>{{ supplier.email or '—' }}</td>
+                        <td>{{ supplier.address or '—' }}</td>
+                        <td>
+                            <div class="button-row">
+                                <a class="btn btn-secondary" href="{{ url_for('edit_supplier', supplier_id=supplier.supplier_id) }}">Edit</a>
+                                <form method="post" action="{{ url_for('delete_supplier', supplier_id=supplier.supplier_id) }}" onsubmit="return confirm('Delete this supplier?');">
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="muted">No suppliers have been added yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

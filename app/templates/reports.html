@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Reporting Module</p>
+    <h1>Reports</h1>
+    <p class="muted">
+        Review low-stock risks, category-based stock valuation, and full purchase order history
+        for decision-making, auditing, and warehouse monitoring.
+    </p>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <section class="card">
+        <h2>Low Stock Alert</h2>
+        <p class="muted">
+            These items are currently at or below their reorder levels and may require procurement action.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>In Stock</th>
+                    <th>Reorder</th>
+                    <th>Supplier</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item, supplier in low_stock %}
+                <tr>
+                    <td><strong>{{ item.item_name }}</strong></td>
+                    <td>{{ item.quantity_in_stock }}</td>
+                    <td>{{ item.reorder_level }}</td>
+                    <td>{{ supplier.supplier_name }}</td>
+                    <td><span class="badge badge-warning">Low Stock</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No low stock items.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Total Stock Value by Category</h2>
+        <p class="muted">
+            This report summarizes inventory volume and estimated value grouped by category.
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Total Items</th>
+                    <th>Total Units</th>
+                    <th>Total Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, total_items, total_units, total_value in category_totals %}
+                <tr>
+                    <td><strong>{{ name }}</strong></td>
+                    <td>{{ total_items }}</td>
+                    <td>{{ total_units or 0 }}</td>
+                    <td>GHS {{ '%.2f'|format(total_value or 0) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No category totals available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</section>
+
+<section class="card" style="margin-top: 1rem;">
+    <h2>Full Purchase Order History</h2>
+    <p class="muted">
+        Review the full history of purchase orders, including supplier, status, order date, and ordered line items.
+    </p>
+
+    {% if po_history %}
+        {% for order in po_history %}
+            <div class="po-card">
+                <div class="button-row" style="justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">PO #{{ order.po_id }}</h3>
+
+                    {% if order.status == 'Delivered' %}
+                        <span class="badge badge-success">Delivered</span>
+                    {% elif order.status == 'Cancelled' %}
+                        <span class="badge badge-danger">Cancelled</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pending</span>
+                    {% endif %}
+                </div>
+
+                <p class="muted" style="margin-bottom: 0.7rem;">
+                    Order Date: <strong>{{ order.order_date }}</strong><br>
+                    Supplier: <strong>{{ order.supplier.supplier_name }}</strong><br>
+                    Ordered by: <strong>{{ order.user.full_name }}</strong><br>
+                    Expected Delivery:
+                    <strong>{{ order.expected_delivery if order.expected_delivery else '—' }}</strong>
+                </p>
+
+                {% if order.items %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity Ordered</th>
+                                <th>Unit Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for line in order.items %}
+                            <tr>
+                                <td>{{ line.item.item_name }}</td>
+                                <td>{{ line.quantity_ordered }}</td>
+                                <td>GHS {{ '%.2f'|format(line.unit_price) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="muted">No line items recorded for this purchase order.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="muted">No purchase order history available.</p>
+    {% endif %}
+</section>
+{% endblock %}

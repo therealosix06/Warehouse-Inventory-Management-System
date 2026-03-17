@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Edit Supplier{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Procurement Module</p>
+    <h1>Edit Supplier</h1>
+    <p class="muted">
+        Update supplier information while preserving procurement and item-link consistency.
+    </p>
+</section>
+
+<section class="form-card narrow" style="margin-top: 1rem;">
+    <h2>Edit {{ supplier.supplier_name }}</h2>
+
+    <form method="post">
+        <label for="supplier_name">Supplier Name</label>
+        <input id="supplier_name" name="supplier_name" value="{{ supplier.supplier_name }}" required>
+
+        <label for="contact_person">Contact Person</label>
+        <input id="contact_person" name="contact_person" value="{{ supplier.contact_person or '' }}">
+
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" value="{{ supplier.phone or '' }}">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" value="{{ supplier.email or '' }}">
+
+        <label for="address">Address</label>
+        <textarea id="address" name="address">{{ supplier.address or '' }}</textarea>
+
+        <div class="button-row">
+            <button class="btn" type="submit">Update Supplier</button>
+            <a class="btn btn-secondary" href="{{ url_for('suppliers') }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

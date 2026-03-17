@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}WIMS Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Inventory Control Platform</p>
+    <h1>Warehouse Inventory Management System</h1>
+    <p class="muted">
+        A warehouse inventory system built with Flask and PostgreSQL to manage items,
+        suppliers, stock movement, purchase orders, reporting, and role-based access control
+        in one structured application.
+    </p>
+
+    <div class="button-row">
+        <a class="btn" href="{{ url_for('setup_demo') }}">Create Initial Data</a>
+        <a class="btn btn-secondary" href="{{ url_for('login') }}">Login to System</a>
+    </div>
+
+    <p class="muted" style="margin-top: 1rem;">
+        Initial data setup will create warehouse records, suppliers, items, purchase orders,
+        transactions, and role-based user accounts for demonstration and testing.
+    </p>
+</section>
+
+<section class="grid cards-4" style="margin-top: 1rem;">
+    <div class="card">
+        <h3>Inventory Tracking</h3>
+        <p class="muted">
+            Monitor stock quantities, reorder levels, storage locations, and item details across the warehouse.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Supplier Management</h3>
+        <p class="muted">
+            Maintain supplier records and link suppliers to items through a many-to-many relationship with supply prices.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Stock Transactions</h3>
+        <p class="muted">
+            Record stock coming in and going out while preserving transaction history for accountability and auditing.
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Purchase Orders & Reports</h3>
+        <p class="muted">
+            Create purchase orders, manage procurement activity, and view reports for stock levels, value, and purchase history.
+        </p>
+    </div>
+</section>
+
+<section class="card" style="margin-top: 1rem;">
+    <h2>System Modules</h2>
+    <p class="muted">
+        The application demonstrates the main database-backed operations expected in a warehouse environment.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Module</th>
+                <th>Purpose</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Items</td>
+                <td>Create, update, track, and monitor inventory records.</td>
+            </tr>
+            <tr>
+                <td>Suppliers</td>
+                <td>Maintain supplier details and item-supplier relationships.</td>
+            </tr>
+            <tr>
+                <td>Transactions</td>
+                <td>Record stock receipts and dispatches while preserving history.</td>
+            </tr>
+            <tr>
+                <td>Purchase Orders</td>
+                <td>Create supplier orders and track ordered line items.</td>
+            </tr>
+            <tr>
+                <td>Reports</td>
+                <td>View low-stock alerts, stock valuation, and purchase order history.</td>
+            </tr>
+            <tr>
+                <td>Database Notes</td>
+                <td>Summarize the relational design, normalization, and key implementation ideas.</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+{% endblock %}

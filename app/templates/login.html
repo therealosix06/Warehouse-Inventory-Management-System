@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<section class="form-card narrow">
+    <p class="muted">Secure Access</p>
+    <h2>Login to WIMS</h2>
+    <p class="muted">
+        Sign in with your assigned staff account to access the warehouse inventory system.
+    </p>
+
+    <form method="post">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required>
+
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" required>
+
+        <button class="btn" type="submit">Login</button>
+    </form>
+</section>
+{% endblock %}

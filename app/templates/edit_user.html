@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Administration Module</p>
+    <h1>Edit User</h1>
+    <p class="muted">
+        Update user details, role assignment, and optionally reset the password.
+    </p>
+</section>
+
+<section class="form-card narrow" style="margin-top: 1rem;">
+    <h2>Edit {{ user.full_name }}</h2>
+
+    <form method="post">
+        <label for="full_name">Full Name</label>
+        <input id="full_name" name="full_name" value="{{ user.full_name }}" required>
+
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" value="{{ user.email }}" required>
+
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+            <option value="Manager" {% if user.role == 'Manager' %}selected{% endif %}>Manager</option>
+            <option value="Clerk" {% if user.role == 'Clerk' %}selected{% endif %}>Clerk</option>
+            <option value="Procurement" {% if user.role == 'Procurement' %}selected{% endif %}>Procurement</option>
+            <option value="Auditor" {% if user.role == 'Auditor' %}selected{% endif %}>Auditor</option>
+        </select>
+
+        <label for="password">New Password (leave blank to keep current password)</label>
+        <input id="password" type="password" name="password">
+
+        <div class="button-row">
+            <button class="btn" type="submit">Update User</button>
+            <a class="btn btn-secondary" href="{{ url_for('users') }}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

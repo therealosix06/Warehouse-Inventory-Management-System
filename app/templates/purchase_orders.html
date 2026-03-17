@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Purchase Orders{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Procurement Module</p>
+    <h1>Purchase Orders</h1>
+    <p class="muted">
+        Create purchase orders for suppliers, add one or more line items,
+        and review procurement history across the warehouse system.
+    </p>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <section class="form-card">
+        <h2>Create Purchase Order</h2>
+        <p class="muted">
+            Select the supplier, expected delivery date, order status, and one or more items to include in the order.
+        </p>
+
+        <form method="post">
+            <label for="supplier_id">Supplier</label>
+            <select id="supplier_id" name="supplier_id" required>
+                {% for supplier in suppliers %}
+                    <option value="{{ supplier.supplier_id }}">{{ supplier.supplier_name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="expected_delivery">Expected Delivery</label>
+            <input id="expected_delivery" type="date" name="expected_delivery">
+
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="Pending">Pending</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+
+            <div id="po-lines" style="margin-top: 1rem;">
+                <div class="card po-line" style="padding: 1rem; margin-bottom: 1rem;">
+                    <h3 style="margin-top: 0;">Order Line 1</h3>
+
+                    <label>Item</label>
+                    <select name="item_id">
+                        {% for item in items %}
+                            <option value="{{ item.item_id }}">{{ item.item_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Quantity Ordered</label>
+                    <input type="number" min="1" name="quantity_ordered">
+
+                    <label>Unit Price</label>
+                    <input type="number" step="0.01" min="0" name="unit_price">
+                </div>
+            </div>
+
+            <div class="button-row">
+                <button class="btn btn-secondary" type="button" onclick="addPOLine()">Add Another Line</button>
+                <button class="btn" type="submit">Create Purchase Order</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Purchase Order History</h2>
+        <p class="muted">
+            Review previous purchase orders, suppliers involved, responsible users, and the ordered line items.
+        </p>
+
+        {% if orders %}
+            {% for order in orders %}
+                <div class="po-card">
+                    <div class="button-row" style="justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0;">PO #{{ order.po_id }}</h3>
+
+                        <div class="button-row">
+                            <a class="btn btn-secondary" href="{{ url_for('purchase_order_detail', po_id=order.po_id) }}">View</a>
+
+                            {% if order.status == 'Delivered' %}
+                                <span class="badge badge-success">Delivered</span>
+                            {% elif order.status == 'Cancelled' %}
+                                <span class="badge badge-danger">Cancelled</span>
+                            {% else %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <p class="muted" style="margin-bottom: 0.7rem;">
+                        Supplier: <strong>{{ order.supplier.supplier_name }}</strong><br>
+                        Ordered by: <strong>{{ order.user.full_name }}</strong><br>
+                        Order Date: <strong>{{ order.order_date }}</strong><br>
+                        Expected Delivery:
+                        <strong>{{ order.expected_delivery if order.expected_delivery else '—' }}</strong>
+                    </p>
+
+                    {% if order.items %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in order.items %}
+                                <tr>
+                                    <td>{{ line.item.item_name }}</td>
+                                    <td>{{ line.quantity_ordered }}</td>
+                                    <td>GHS {{ '%.2f'|format(line.unit_price) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="muted">No order lines recorded for this purchase order.</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No purchase orders have been created yet.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

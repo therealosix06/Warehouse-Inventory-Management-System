@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="muted">Administration Module</p>
+    <h1>User Management</h1>
+    <p class="muted">
+        Create, review, and manage staff accounts with assigned system roles.
+    </p>
+</section>
+
+<section class="grid two-col" style="margin-top: 1rem;">
+    <section class="form-card">
+        <h2>Add User</h2>
+        <p class="muted">
+            Create a new user account and assign the correct role for access control.
+        </p>
+
+        <form method="post">
+            <label for="full_name">Full Name</label>
+            <input id="full_name" name="full_name" required>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" required>
+
+            <label for="role">Role</label>
+            <select id="role" name="role" required>
+                <option value="Manager">Manager</option>
+                <option value="Clerk">Clerk</option>
+                <option value="Procurement">Procurement</option>
+                <option value="Auditor">Auditor</option>
+            </select>
+
+            <label for="password">Initial Password</label>
+            <input id="password" type="password" name="password" required>
+
+            <button class="btn" type="submit">Create User</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Current Users</h2>
+        <p class="muted">
+            Review the current system users and their assigned roles.
+        </p>
+
+        {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.full_name }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '—' }}</td>
+                        <td>
+                            <div class="button-row">
+                                <a class="btn btn-secondary" href="{{ url_for('edit_user', user_id=user.user_id) }}">Edit</a>
+                                <form method="post" action="{{ url_for('delete_user', user_id=user.user_id) }}" onsubmit="return confirm('Delete this user?');">
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="muted">No users found.</p>
+        {% endif %}
+    </section>
+</section>
+{% endblock %}

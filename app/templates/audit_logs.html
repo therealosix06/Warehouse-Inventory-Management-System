@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Audit Logs{% endblock %}
+
+{% block content %}
+<section class="hero audit-hero">
+    <div>
+        <p class="muted">Audit Module</p>
+        <h1>Audit Logs</h1>
+        <p class="muted">
+            Review tracked system changes, the affected table, the operation performed,
+            who performed it, and the before/after state where applicable.
+        </p>
+    </div>
+</section>
+
+<section class="card" style="margin-top: 1rem;">
+    <div class="section-heading">
+        <div>
+            <h2>System Activity History</h2>
+            <p class="muted">Recent database-level changes recorded by the audit trail.</p>
+        </div>
+    </div>
+
+    {% if logs %}
+        <div class="table-wrap">
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Table</th>
+                        <th>Operation</th>
+                        <th>Record ID</th>
+                        <th>Acted By</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>
+                            <div class="audit-time">
+                                {{ log.action_time.strftime('%Y-%m-%d') if log.action_time else '—' }}<br>
+                                <span class="muted">{{ log.action_time.strftime('%H:%M:%S') if log.action_time else '' }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="audit-pill">{{ log.table_name }}</span>
+                        </td>
+
+                        <td>
+                            {% if log.operation == 'INSERT' %}
+                                <span class="badge badge-success">INSERT</span>
+                            {% elif log.operation == 'UPDATE' %}
+                                <span class="badge badge-warning">UPDATE</span>
+                            {% elif log.operation == 'DELETE' %}
+                                <span class="badge badge-danger">DELETE</span>
+                            {% else %}
+                                <span class="badge">{{ log.operation }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ log.record_id or '—' }}</td>
+                        <td>{{ log.acted_by or 'Unknown' }}</td>
+
+                        <td>
+                            <div class="audit-details-stack">
+                                {% if log.old_data %}
+                                <details class="audit-details">
+                                    <summary>Previous Data</summary>
+                                    <pre>{{ log.old_data }}</pre>
+                                </details>
+                                {% endif %}
+
+                                {% if log.new_data %}
+                                <details class="audit-details" {% if log.operation == 'INSERT' %}open{% endif %}>
+                                    <summary>New Data</summary>
+                                    <pre>{{ log.new_data }}</pre>
+                                </details>
+                                {% endif %}
+
+                                {% if not log.old_data and not log.new_data %}
+                                    <span class="muted">No change snapshot available.</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="muted">No audit logs available yet.</p>
+    {% endif %}
+</section>
+{% endblock %}
