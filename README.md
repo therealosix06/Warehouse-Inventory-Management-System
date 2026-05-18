@@ -40,6 +40,20 @@ The system supports multiple warehouse-related roles, such as:
 
 This project was built to solve a real warehouse problem: keeping inventory organized, tracking stock movement, and supporting different user responsibilities inside a warehouse system.
 
+
+Current Status
+
+Core warehouse inventory features are working, including authentication, role-based access, database-backed inventory records, and deployment configuration.
+
+Future Improvements
+Better analytics dashboard
+Stock movement history
+Low-stock alerts
+Export reports to CSV/PDF
+Improved role permissions
+REST API support
+Barcode/QR code integration
+
 ## Setup
 
 ```bash
