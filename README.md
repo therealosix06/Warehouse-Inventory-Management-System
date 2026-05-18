@@ -1,42 +1,51 @@
-# WIMS Flask + PostgreSQL App
+# WIMS — Warehouse Inventory Management System
 
-This is a complete mini app for the Warehouse Inventory Management System project. It is designed so your group can **demo the software** and also **explain the database design cleanly**.
+WIMS is a Flask-based warehouse inventory management system built to help manage products, stock levels, suppliers, purchase requests, and warehouse operations.
 
-## What the app covers
+## Features
 
-- Inventory items, categories, warehouses, locations, suppliers, purchase orders, users, and stock transactions
-- Many-to-many relationship between `Item` and `Supplier` through `item_supplier`
-- One-to-many relationships such as:
-  - `Category -> Item`
-  - `Warehouse -> Location`
-  - `Location -> Item`
-  - `PurchaseOrder -> PurchaseOrderItem`
-  - `User -> StockTransaction`
-- Role-based login for Manager, Clerk, Procurement, and Auditor
-- Low-stock report, stock value report, and purchase order history
-- PostgreSQL schema with PKs, FKs, `CHECK`, `UNIQUE`, indexes, and a PL/pgSQL function
+- User authentication and login system
+- Role-based access for warehouse users
+- Product inventory management
+- Stock level tracking
+- Supplier management
+- Purchase/procurement request handling
+- Admin/manager dashboard
+- PostgreSQL database integration
+- Deployed web application
 
-## Suggested demo flow
+## Tech Stack
 
-1. Login as Manager or Clerk
-2. Show dashboard metrics and low-stock alerts
-3. Add a new item
-4. Record a stock IN or OUT transaction and show stock changing
-5. Create a purchase order with multiple line items
-6. Open reports and explain the joins
-7. Open `docs/ERD.md` and your SQL schema while presenting the relationships
+- Python
+- Flask
+- PostgreSQL
+- SQLAlchemy
+- Flask-Login
+- Flask-WTF
+- HTML
+- CSS
+- Bootstrap
+- Render
 
-## Project structure
+## User Roles
 
-- `app/models.py` → ORM models matching the relational schema
-- `app/routes.py` → business logic and screens
-- `schema.sql` → PostgreSQL schema + stored function
-- `seed.sql` → project sample data
-- `docs/ERD.md` → Mermaid ERD for quick diagram generation
+The system supports multiple warehouse-related roles, such as:
+
+- Manager
+- Clerk
+- Procurement Officer
+- Auditor
+
+## Project Purpose
+
+This project was built to solve a real warehouse problem: keeping inventory organized, tracking stock movement, and supporting different user responsibilities inside a warehouse system.
 
 ## Setup
 
-### 1. Create the database
-
-```sql
-CREATE DATABASE wims;
+```bash
+git clone <your-repo-url>
+cd stockr
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
