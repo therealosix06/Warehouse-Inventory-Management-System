@@ -1,20 +1,40 @@
 # WIMS — Warehouse Inventory Management System
 
-WIMS is a Flask-based warehouse inventory management system built to help manage products, stock levels, suppliers, purchase requests, and warehouse operations.
+WIMS is a Flask-based warehouse inventory management system designed to help organizations manage inventory, stock levels, suppliers, procurement workflows, and warehouse operations efficiently.
 
-## Features
+The system supports multiple warehouse roles and provides database-backed inventory management using PostgreSQL.
+
+---
+
+# Features
 
 - User authentication and login system
-- Role-based access for warehouse users
+- Role-based access control
 - Product inventory management
-- Stock level tracking
+- Stock quantity tracking
 - Supplier management
-- Purchase/procurement request handling
-- Admin/manager dashboard
+- Procurement request handling
+- Warehouse activity organization
 - PostgreSQL database integration
-- Deployed web application
+- Responsive UI with Bootstrap
+- Deployed production-ready configuration
 
-## Tech Stack
+---
+
+# User Roles
+
+WIMS supports multiple warehouse-related user roles, including:
+
+- Manager
+- Clerk
+- Procurement Officer
+- Auditor
+
+Different users have access to different warehouse operations based on their role.
+
+---
+
+# Tech Stack
 
 - Python
 - Flask
@@ -27,39 +47,21 @@ WIMS is a Flask-based warehouse inventory management system built to help manage
 - Bootstrap
 - Render
 
-## User Roles
+---
 
-The system supports multiple warehouse-related roles, such as:
+# Project Structure
 
-- Manager
-- Clerk
-- Procurement Officer
-- Auditor
+```txt
+WIMS/
+├── app/
+├── templates/
+├── static/
+├── models/
+├── forms/
+├── routes/
+├── requirements.txt
+└── run.py
 
-## Project Purpose
-
-This project was built to solve a real warehouse problem: keeping inventory organized, tracking stock movement, and supporting different user responsibilities inside a warehouse system.
 
 
-Current Status
 
-Core warehouse inventory features are working, including authentication, role-based access, database-backed inventory records, and deployment configuration.
-
-Future Improvements
-Better analytics dashboard
-Stock movement history
-Low-stock alerts
-Export reports to CSV/PDF
-Improved role permissions
-REST API support
-Barcode/QR code integration
-
-## Setup
-
-```bash
-git clone <your-repo-url>
-cd stockr
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
